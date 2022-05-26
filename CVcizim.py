@@ -4,11 +4,18 @@ import pandas as pd
 
 df=pd.read_csv("butunNoktalar1.csv")
 print(df.shape[0])
-image  = cv2.imread("beyaz.png")
-image=cv2.resize(image,(800,680))
+image  = cv2.imread("siyah.png")
+image=cv2.resize(image,(960,720))
 
 col_atlama=4
+
 satir_atlama=0
+
+satir_atlama_deger=10
+
+satir_atlama_sinir_deger=60
+satir_atlama_sinir=satir_atlama_sinir_deger
+cizim_sayac=0
 x_eksen=[]
 y_eksen=[]
 
@@ -39,7 +46,7 @@ global_colors[8]=[66,66,255]#bitiş 0 0 145
 7 => 26-28 25-27
 8 => 27-28-29-30-31-32
 """
-satir_atlama_sinir=48
+
 while satir_atlama<df.shape[0]:
     x_eksen.clear()
     y_eksen.clear()
@@ -60,8 +67,9 @@ while satir_atlama<df.shape[0]:
             else:
                 continue
 
-            #image = cv2.circle(image , (x,y), 6, (0, 0, 255), -1)
-        satir_atlama=satir_atlama + 8
+
+
+        satir_atlama += satir_atlama_deger
         col_atlama = 4
 
         i=0
@@ -144,7 +152,7 @@ while satir_atlama<df.shape[0]:
                 # kalça 
                 elif i==24:
                     image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[23],y_eksen[23]), (global_colors[1][0],global_colors[1][1], global_colors[1][2]), 4)
-
+                    cizim_sayac +=1
                     global_colors[1][0]-=30
                     global_colors[1][1]-=30
                     global_colors[1][2]-=30
@@ -193,17 +201,34 @@ while satir_atlama<df.shape[0]:
                 pass
             print(satir_atlama)
         if satir_atlama >=satir_atlama_sinir:
-            cv2.imwrite("data2"+"/"+df['class'][satir_atlama]+"/"+str(satir_atlama)+".jpg",image)
-            global_colors[2]=[255,180,220]#bitiş 236 0 118
-            global_colors[3]=[255,45,45]#bitiş 150 0 0
-            global_colors[4]=[125,249,255]#bitiş 0 189 196
-            global_colors[5]=[255,255,81]#bitiş 210 210 0
-            global_colors[6]=[110,255,110]#bitiş 0 113 0
-            global_colors[7]=[255,158,62]#bitiş 221 111 0
-            global_colors[8]=[66,66,255]#bitiş 0 0 145
-            image = cv2.imread("beyaz.png")
-            image = cv2.resize(image,(800,680))
-            satir_atlama_sinir +=48
+            if cizim_sayac==6:
+                cizim_sayac=0
+                cv2.imwrite("data2"+"/"+df['class'][satir_atlama]+"/"+str(satir_atlama)+"_1"+".jpg",image)
+                print("*********************************kayıt etti*********************************")
+                global_colors[2]=[255,180,220]#bitiş 236 0 118
+                global_colors[3]=[255,45,45]#bitiş 150 0 0
+                global_colors[4]=[125,249,255]#bitiş 0 189 196
+                global_colors[5]=[255,255,81]#bitiş 210 210 0
+                global_colors[6]=[110,255,110]#bitiş 0 113 0
+                global_colors[7]=[255,158,62]#bitiş 221 111 0
+                global_colors[8]=[66,66,255]#bitiş 0 0 145
+                image = cv2.imread("siyah.png")
+                image=cv2.resize(image,(960,720))
+
+                satir_atlama_sinir +=satir_atlama_sinir_deger
+            else:
+                cizim_sayac=0
+                global_colors[2]=[255,180,220]#bitiş 236 0 118
+                global_colors[3]=[255,45,45]#bitiş 150 0 0
+                global_colors[4]=[125,249,255]#bitiş 0 189 196
+                global_colors[5]=[255,255,81]#bitiş 210 210 0
+                global_colors[6]=[110,255,110]#bitiş 0 113 0
+                global_colors[7]=[255,158,62]#bitiş 221 111 0
+                global_colors[8]=[66,66,255]#bitiş 0 0 145
+                image = cv2.imread("siyah.png")
+                image=cv2.resize(image,(960,720))
+
+                satir_atlama_sinir +=satir_atlama_sinir_deger
     else:
         continue
 
