@@ -2,24 +2,28 @@ import cv2
 import numpy as np
 import pandas as pd
 
-df=pd.read_csv("butunNoktalar1.csv")
+df=pd.read_csv("butunNoktalar1_1_1.csv")
 print(df.shape[0])
 image  = cv2.imread("siyah.png")
 image=cv2.resize(image,(960,720))
 
 col_atlama=4
 
-satir_atlama=0
-
+# Başlanılacak satır değeri 0 dan csv den tek tek kayıt etmek yerine en son kayıt edilen yerden başlamak zaman kazandırır
+satir_atlama=406900
+# 10 frame den 1 tane seçiyor 
 satir_atlama_deger=10
-
+# toplamda 60 tane frame seçiyor bu da 2 saniyeye denk geliyor
 satir_atlama_sinir_deger=60
-satir_atlama_sinir=satir_atlama_sinir_deger
+
+satir_atlama_sinir=satir_atlama_sinir_deger+satir_atlama
+
+
 cizim_sayac=0
 x_eksen=[]
 y_eksen=[]
 
-
+# REnklerin değerlerini tutulduğu liste
 global_colors=[]
 
 for i in range(9):
@@ -59,8 +63,11 @@ while satir_atlama<df.shape[0]:
 
                 corr=df.iloc[satir_atlama:satir_atlama+1,col_atlama-2:col_atlama].values
 
-                x=int(480*(float(corr[0][0])))
-                y=int(640*(float(corr[0][1])))
+                #Normal resim çözünürlüğünden 1.2 oranında küçük halde değerleri almak normalde resimde gözükmeyen uvuzların daha net çizilmesini sağlar
+                x=int(800*(float(corr[0][0])))
+                y=int(600*(float(corr[0][1])))
+                
+                # Çizim yapmak için kordinatları listelere ekleniyor
                 x_eksen.append(x)
                 y_eksen.append(y)
                 col_atlama +=2
@@ -70,6 +77,8 @@ while satir_atlama<df.shape[0]:
 
 
         satir_atlama += satir_atlama_deger
+
+        # Bi sonraki çizim için yine aynı sütunlardan başaması için eski değerine döndürdüm
         col_atlama = 4
 
         i=0
@@ -98,11 +107,12 @@ while satir_atlama<df.shape[0]:
                 elif i==9:
                     image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[10],y_eksen[10]), (0,150,150), 4)                     
                 elif i==11:
-                    image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[12],y_eksen[12]), (global_colors[1][0],global_colors[1][1], global_colors[1][2]), 4)
 
                     image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[13],y_eksen[13]), (global_colors[2][0],global_colors[2][1], global_colors[2][2]), 4)
                     
                     image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[23],y_eksen[23]), (global_colors[5][0],global_colors[5][1], global_colors[5][2]), 4)    
+                
+                
                 elif i==12:
                     image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[14],y_eksen[14]), (global_colors[2][0],global_colors[2][1], global_colors[2][2]), 4)
                     if global_colors[2][1]<=0:
@@ -121,6 +131,12 @@ while satir_atlama<df.shape[0]:
 
                     if global_colors[5][2] > 1:
                         global_colors[5][2] -= 20
+
+
+                    image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[11],y_eksen[11]), (global_colors[1][0],global_colors[1][1], global_colors[1][2]), 4)
+                    #Buranın doldurulması lazım
+
+
                 elif i==14:
 
                     image = cv2.line(image, (x_eksen[i],y_eksen[i]), (x_eksen[16],y_eksen[16]), (global_colors[3][0],global_colors[3][1], global_colors[3][2]), 4)                     
@@ -203,7 +219,7 @@ while satir_atlama<df.shape[0]:
         if satir_atlama >=satir_atlama_sinir:
             if cizim_sayac==6:
                 cizim_sayac=0
-                cv2.imwrite("data2"+"/"+df['class'][satir_atlama]+"/"+str(satir_atlama)+"_1"+".jpg",image)
+                cv2.imwrite("data2"+"/"+df['class'][satir_atlama]+"/"+str(satir_atlama)+""+".jpg",image)
                 print("*********************************kayıt etti*********************************")
                 global_colors[2]=[255,180,220]#bitiş 236 0 118
                 global_colors[3]=[255,45,45]#bitiş 150 0 0
@@ -227,6 +243,7 @@ while satir_atlama<df.shape[0]:
                 global_colors[8]=[66,66,255]#bitiş 0 0 145
                 image = cv2.imread("siyah.png")
                 image=cv2.resize(image,(960,720))
+                print("çizmedi")
 
                 satir_atlama_sinir +=satir_atlama_sinir_deger
     else:
@@ -240,4 +257,3 @@ cv2.imshow("img,",image )
 
 cv2.waitKey()
 cv2.destrowyAllWindows()
-
